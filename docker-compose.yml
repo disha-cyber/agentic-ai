@@ -6,14 +6,6 @@ services:
       - .:/workspace
     stdin_open: true
     tty: true
-services:
-  dev:
-    build: .
-    container_name: agentic-ai-devops-env
-    volumes:
-      - .:/workspace
-    stdin_open: true
-    tty: true
 
   jenkins:
     image: jenkins/jenkins:lts
