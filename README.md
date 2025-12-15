@@ -49,3 +49,49 @@ python --version
 Expected results:
 Directory: /workspace
 Python version: 3.10
+
+## Jenkins Setup (Running Inside Docker)
+
+This project runs **Jenkins inside a Docker container** for CI/CD automation.
+
+---
+
+## ▶Start Jenkins (via Docker Compose)
+
+From the project root:
+
+```bash
+docker compose up --build
+http://localhost:8080
+
+🔐 Unlock Jenkins (First-Time Setup)
+
+When Jenkins runs for the first time, you will see the Unlock Jenkins screen.
+
+Jenkins generates a one-time admin password inside the container.
+
+📌 Get the Admin Password
+
+Run this command on the host terminal:
+
+docker exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+
+
+Copy the full output string.
+
+🔓 Complete Jenkins Setup
+
+Open browser:
+
+http://localhost:8080
+
+
+Paste the admin password
+
+Click Continue
+
+Select Install suggested plugins
+
+Create an admin user (username & password)
+
+Finish setup and reach Jenkins dashboard
