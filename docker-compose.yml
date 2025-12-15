@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   dev:
     build: .
@@ -8,3 +6,24 @@ services:
       - .:/workspace
     stdin_open: true
     tty: true
+services:
+  dev:
+    build: .
+    container_name: agentic-ai-devops-env
+    volumes:
+      - .:/workspace
+    stdin_open: true
+    tty: true
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+    restart: unless-stopped
+
+volumes:
+  jenkins_home:
