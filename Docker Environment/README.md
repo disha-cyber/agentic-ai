@@ -224,7 +224,7 @@ Expected:
 
 ## Notes
 
-* Stopping Docker (`docker compose down`) does **not** delete Jenkins jobs or pipelines.
+* Stopping Docker (`docker compose down`) does **not** delete Jenkins jobs or pipelines, so can be stopped.
 * Jenkins data persists via Docker volumes.
 * Restarting Docker brings Jenkins and all configurations back exactly as before.
 
