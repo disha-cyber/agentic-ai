@@ -10,17 +10,9 @@ pipeline {
             }
         }
 
-        stage('Verify Workspace') {
+        stage('Verify') {
             steps {
                 sh 'ls -la'
-            }
-        }
-
-        stage('Verify Python (Executor Container)') {
-            steps {
-                sh '''
-                docker exec agentic-ai-devops-env python --version
-                '''
             }
         }
     }
