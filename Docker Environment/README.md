@@ -217,10 +217,68 @@ Commit and push this file to GitHub.
 Click **Build Now**.
 
 Expected:
-
 * Jenkins checks out code via SSH
 * Pipeline runs successfully
 * Workspace and Python version are displayed
+
+## Automatic Pipeline Trigger using Poll SCM
+
+Since Jenkins is running locally without a public endpoint, GitHub webhooks cannot be used directly.  
+To enable automatic pipeline execution when code is pushed to the repository, **SCM polling (Poll SCM)** is configured.
+
+### How Poll SCM Works
+Jenkins periodically checks the GitHub repository for new commits.  
+If any changes are detected, the pipeline is triggered automatically.
+
+---
+
+### 🛠 Jenkins Configuration Steps
+
+1. Open the Jenkins pipeline job.
+2. Click **Configure**.
+3. Under **Build Triggers**, enable:
+   - ☑ **Poll SCM**
+4. In the schedule field, enter:
+
+```
+
+H/2 * * * *
+
+```
+
+5. Click **Save**.
+
+---
+
+### Cron Schedule Explanation
+
+- `H` — Jenkins assigns a stable hashed minute to avoid all jobs running simultaneously.
+- `/2` — Jenkins polls the repository every **2 minutes**.
+- `* * * *` — Applies to all hours, days, and months.
+
+This ensures efficient and load-balanced polling.
+
+---
+
+### Result
+
+Whenever a commit is pushed to the GitHub repository:
+- Jenkins detects the change during the next poll cycle.
+- The pipeline is triggered automatically without manual intervention.
+
+---
+
+## Notes
+
+- Poll SCM is ideal for **local Jenkins setups** where webhooks are not possible.
+- For cloud-hosted Jenkins with a public IP, GitHub webhooks can be used instead.
+
+---
+
+### Summary
+
+Poll SCM enables automated CI execution by periodically polling the source repository, making it a reliable alternative to webhooks for locally hosted Jenkins instances.
+```
 
 ## Notes
 
