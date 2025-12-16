@@ -16,10 +16,11 @@ pipeline {
             }
         }
         stage('Verify Python') {
-            steps {
-                sh 'python3 --version || python --version'
-            }
-        }
-
+    steps {
+        sh '''
+        docker exec agentic-ai-devops-env python --version
+        '''
+    }
+}
     }
 }
