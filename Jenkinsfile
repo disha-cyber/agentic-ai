@@ -2,6 +2,13 @@ pipeline {
     agent any
 
     stages {
+
+        stage('Clean Workspace') {
+            steps {
+                deleteDir()
+            }
+        }
+
         stage('Checkout Code (SSH)') {
             steps {
                 git branch: 'main',
