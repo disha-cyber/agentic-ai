@@ -2,15 +2,16 @@ pipeline {
     agent any
 
     options {
-        skipDefaultCheckout(true)
+        skipDefaultCheckout(true)   // 🚨 CRITICAL
     }
 
     stages {
 
-        stage('Checkout Code (SSH)') {
+        stage('Checkout Code via SSH (Should Fail)') {
             steps {
                 git branch: 'main',
                     url: 'git@github.com:disha-cyber/agentic-ai.git'
+                    // ❌ NO credentialsId on purpose
             }
         }
 
