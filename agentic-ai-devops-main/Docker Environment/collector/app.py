@@ -3,9 +3,11 @@ from collector import get_failed_event, start_watcher
 
 app = FastAPI()
 
+
 @app.on_event("startup")
-def startup():
-    start_watcher()   # 🔥 THIS WAS MISSING
+def startup_event():
+    start_watcher()
+
 
 @app.get("/event/failure")
 def failed_event():
