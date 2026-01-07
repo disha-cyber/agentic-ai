@@ -11,77 +11,78 @@ LAST_FAILED_BUILD_NUMBER = None
 def capture_failure(build):
     global LATEST_FAILURE_EVENT, LAST_FAILED_BUILD_NUMBER
 
-    build_number = build.get("number")
+    build_number = build["number"]
+
+    print(f"🚨 Capturing failure for build #{build_number}")
 
     try:
-        log = fetch_console_log()
+        log = fetch_console_log(build_number)
     except Exception as e:
         log = f"Failed to fetch console log: {e}"
 
     LATEST_FAILURE_EVENT = {
-        "event_id": f"evt-{uuid.uuid4().hex[:6]}",
+        "event_id": f"evt-{uuid.uuid4()}",
         "timestamp": datetime.utcnow().isoformat() + "Z",
         "source": "jenkins",
         "ci": {
-            "job_name": build.get("fullDisplayName"),
+            "job_name": build["fullDisplayName"],
             "build_id": build_number,
-            "result": build.get("result"),
-            "url": build.get("url")
+            "result": build["result"],
+            "url": build["url"],
         },
         "error": {
             "type": "PIPELINE_FAILURE",
-            "raw_log": log[-500:]  # last 500 chars
+            "raw_log": log
         }
     }
 
     LAST_FAILED_BUILD_NUMBER = build_number
-    print(f"🚨 Failure captured: #{build_number}")
+    print("✅ Failure event stored")
 
 
 def watcher():
     global LAST_FAILED_BUILD_NUMBER
 
-    print("🟢 Jenkins failure watcher started")
+    print("🟢 Jenkins watcher running...")
 
     while True:
         try:
             build = fetch_last_build()
+            print("DEBUG:", build["result"], build["building"])
 
-            if (
-                not build.get("building")
-                and build.get("result") == "FAILURE"
-            ):
-                build_number = build.get("number")
-
-                if build_number != LAST_FAILED_BUILD_NUMBER:
+            if build["result"] == "FAILURE" and not build["building"]:
+                if build["number"] != LAST_FAILED_BUILD_NUMBER:
                     capture_failure(build)
 
         except Exception as e:
             print("❌ Watcher error:", e)
 
-        time.sleep(10)
+        time.sleep(5)
 
 
 def start_watcher():
-    global LAST_FAILED_BUILD_NUMBER
+    print("🚀 Starting Jenkins failure watcher")
 
-    # 🔥 Capture existing failure on startup
+    # 🔥 CAPTURE FAILURE IMMEDIATELY ON STARTUP
     try:
         build = fetch_last_build()
-        if (
-            not build.get("building")
-            and build.get("result") == "FAILURE"
-        ):
+        print("Startup build state:", build["result"], build["building"])
+
+        if build["result"] == "FAILURE" and not build["building"]:
             capture_failure(build)
+
     except Exception as e:
-        print("❌ Bootstrap error:", e)
+        print("❌ Startup check failed:", e)
 
     t = threading.Thread(target=watcher, daemon=True)
     t.start()
 
 
 def get_failed_event():
-    return LATEST_FAILURE_EVENT or {
+    if LATEST_FAILURE_EVENT:
+        return LATEST_FAILURE_EVENT
+
+    return {
         "status": "ok",
         "message": "No pipeline failure detected"
     }
